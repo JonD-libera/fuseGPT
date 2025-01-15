@@ -109,6 +109,8 @@ class OpenAIFS(Operations):
             response = requests.post('https://api.openai.com/v1/chat/completions', headers=headers, data=json.dumps(data))
             logging.debug(f'Raw response from OpenAI: {response.text}')
             content = response.json()['choices'][0]['message']['content'].strip()
+            # Strip code block delimiters ``` from the start and end of the content
+            content = re.sub(r'^```.*\n|```$', '', content)
             logging.info(f'Content received for {path}')
             self.file_cache[path] = {'content': content, 'time': current_time}
         
